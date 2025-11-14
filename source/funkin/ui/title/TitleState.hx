@@ -33,6 +33,11 @@ import funkin.api.newgrounds.Medals;
 import funkin.ui.freeplay.FreeplayState;
 import openfl.display.BlendMode;
 import funkin.save.Save;
+import flixel.FlxState;
+import flixel.FlxG;
+import flixel.text.FlxText;
+import flixel.FlxSprite;
+import flixel.util.FlxColor;
 #if mobile
 import funkin.util.TouchUtil;
 import funkin.util.SwipeUtil;
@@ -58,6 +63,7 @@ class TitleState extends MusicBeatState
   {
     super.create();
     swagShader = new ColorSwap();
+    isRainbow = true;
 
     curWacky = FlxG.random.getObject(getIntroTextShit());
     funkin.FunkinMemory.cacheSound(Paths.music('girlfriendsRingtone/girlfriendsRingtone'));
@@ -241,7 +247,8 @@ class TitleState extends MusicBeatState
     // Only applicable on desktop and Android.
     if (#if android FlxG.android.justReleased.BACK || #end controls.BACK)
     {
-      openfl.Lib.application.window.close();
+      trace('exiting....................................');
+      openfl.Lib.application.window.close(); // todo: make a exit confirmation dialog if i can even do that because my haxe coding skills are bad and my code is literal "spaghetti"
     }
     #end
 
@@ -342,10 +349,25 @@ class TitleState extends MusicBeatState
     FlxG.switchState(() -> new MainMenuState());
   }
 
-  override function draw()
-  {
+override public function draw():Void {
     super.draw();
-  }
+
+    static var rainbowTime:Float = 0;
+    rainbowTime += FlxG.elapsed * 2;
+    var t:Float = rainbowTime;
+
+    for (obj in this.members) {
+        if (Std.is(obj, FlxSprite) || Std.is(obj, FlxText)) {
+            var r = Math.floor(127 * Math.sin(t) + 128);
+            var g = Math.floor(127 * Math.sin(t + 2) + 128);
+            var b = Math.floor(127 * Math.sin(t + 4) + 128);
+            var color = FlxColor.fromRGB(r, g, b);
+
+            if (Std.is(obj, FlxSprite)) cast(obj, FlxSprite).color = color;
+            if (Std.is(obj, FlxText)) cast(obj, FlxText).color = color;
+        }
+    }
+}
 
   var cheatArray:Array<Int> = [0x0001, 0x0010, 0x0001, 0x0010, 0x0100, 0x1000, 0x0100, 0x1000];
   var curCheatPos:Int = 0;
