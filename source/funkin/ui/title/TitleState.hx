@@ -520,7 +520,7 @@ override public function draw():Void {
               #end
               if (txt != null)
               {
-                txt.scale.set(1.3, 1.3);
+                txt.scale.set(1.2, 1.2);
                 FlxTween.cancelTweensOf(txt.scale);
                 FlxTween.tween(txt.scale, {x: 1.0, y: 1.0}, 0.3, {ease: FlxEase.sineOut});
               }
@@ -542,9 +542,9 @@ override public function draw():Void {
         bumpBeatCounter = 0;
         if (logoBl != null)
         {
-          logoBl.scale.set(1.3, 1.3);
+          logoBl.scale.set(1, 1);
           FlxTween.cancelTweensOf(logoBl.scale);
-          FlxTween.tween(logoBl.scale, {x: 1.0, y: 1.0}, 0.3, {ease: FlxEase.sineOut});
+          FlxTween.tween(logoBl.scale, {x: 0.9, y: 0.9}, 0.3, {ease: FlxEase.sineOut});
         }
       }
 
