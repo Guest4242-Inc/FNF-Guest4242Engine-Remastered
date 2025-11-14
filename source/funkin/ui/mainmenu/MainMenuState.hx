@@ -310,7 +310,9 @@ class MainMenuState extends MusicBeatState
   {
     if (leftWatermarkText == null) return;
 
-    leftWatermarkText.text = Constants.VERSION;
+    // og incase i break something: leftWatermarkText.text = Constants.VERSION;
+    leftWatermarkText.text = "FNF Guest4242 Engine REMASTERED " + Constants.VERSION +
+      " (base version: 0.7.5)"; // had to embed the fnf version inside because I CANT GET THE THING TO WORK BECAUSE IT KEEPS DOING TYPE NOT FOUND ERROR ON ME GAAAAH
 
     #if FEATURE_NEWGROUNDS
     if (NewgroundsClient.instance.isLoggedIn())

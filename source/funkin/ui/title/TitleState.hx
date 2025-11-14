@@ -93,8 +93,9 @@ class TitleState extends MusicBeatState
 
     logoBl = new FlxSprite(-150 + (FullScreenScaleMode.gameCutoutSize.x / 2.5), -100);
     logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
-    logoBl.animation.addByPrefix('bump', 'logo bumpin', 24);
-    logoBl.animation.play('bump');
+    // Only use the first frame for the logo (single frame, no animation)
+    logoBl.animation.addByPrefix('idle', 'logo bumpin', 24, false);
+    logoBl.animation.play('idle');
     logoBl.shader = swagShader.shader;
     logoBl.updateHitbox();
 
@@ -430,6 +431,10 @@ class TitleState extends MusicBeatState
   var isRainbow:Bool = false;
   var skippedIntro:Bool = false;
 
+  // For logo bumping at 102 BPM (every 0.588s)
+  var bumpBeatInterval:Float = 60.0 / 102.0; // ~0.588s
+  var bumpBeatCounter:Int = 0;
+
   override function beatHit():Bool
   {
     // super.beatHit() returns false if a module cancelled the event.
@@ -437,12 +442,8 @@ class TitleState extends MusicBeatState
 
     if (!skippedIntro)
     {
-      // FlxG.log.add(Conductor.instance.currentBeat);
-      // if the user is draggin the window some beats will
-      // be missed so this is just to compensate
       if (Conductor.instance.currentBeat > lastBeat)
       {
-        // TODO: Why does it perform ALL the previous steps each beat?
         for (i in lastBeat...Conductor.instance.currentBeat)
         {
           switch (i + 1)
@@ -467,19 +468,41 @@ class TitleState extends MusicBeatState
               addMoreText(curWacky[1]);
             case 12:
               deleteCoolText();
-            case 13:
               addMoreText('Friday');
+            case 13:
+              addMoreText('Night');
             case 14:
-              // easter egg for when the game is trending with the wrong spelling
-              // the random intro text would be "trending--only on x"
-
-              if (curWacky[0] == "trending") addMoreText('Nigth');
+              if (curWacky[0] == "trending") addMoreText('Fnukin');
               else
-                addMoreText('Night');
+                addMoreText('Funkin');
             case 15:
-              addMoreText('Funkin');
+              addMoreText('GUEST4242 ENGINE REMASTER');
             case 16:
               skipIntro();
+          }
+        }
+        // Bounce credits at 102 BPM
+        var beatsPerBump = Math.round(Conductor.instance.bpm / 102.0);
+        bumpBeatCounter++;
+        if (bumpBeatCounter >= beatsPerBump)
+        {
+          bumpBeatCounter = 0;
+          if (textGroup != null && textGroup.members != null)
+          {
+            for (member in textGroup.members)
+            {
+              #if (haxe_ver >= 4.0)
+              var txt = Std.isOfType(member, AtlasText) ? cast(member, AtlasText) : null;
+              #else
+              var txt = Std.is(member, AtlasText) ? cast(member, AtlasText) : null;
+              #end
+              if (txt != null)
+              {
+                txt.scale.set(1.3, 1.3);
+                FlxTween.cancelTweensOf(txt.scale);
+                FlxTween.tween(txt.scale, {x: 1.0, y: 1.0}, 0.3, {ease: FlxEase.sineOut});
+              }
+            }
           }
         }
       }
@@ -489,10 +512,21 @@ class TitleState extends MusicBeatState
     {
       if (cheatActive && Conductor.instance.currentBeat % 2 == 0) swagShader.update(0.125);
 
-      if (logoBl != null && logoBl.animation != null) logoBl.animation.play('bump', true);
+      // Bump logo at 102 BPM (every 0.588s)
+      bumpBeatCounter++;
+      var beatsPerBump = Math.round(Conductor.instance.bpm / 102.0);
+      if (bumpBeatCounter >= beatsPerBump)
+      {
+        bumpBeatCounter = 0;
+        if (logoBl != null)
+        {
+          logoBl.scale.set(1.3, 1.3);
+          FlxTween.cancelTweensOf(logoBl.scale);
+          FlxTween.tween(logoBl.scale, {x: 1.0, y: 1.0}, 0.3, {ease: FlxEase.sineOut});
+        }
+      }
 
       danceLeft = !danceLeft;
-
       if (gfDance != null && gfDance.animation != null)
       {
         if (danceLeft) gfDance.animation.play('danceRight');
@@ -500,7 +534,6 @@ class TitleState extends MusicBeatState
           gfDance.animation.play('danceLeft');
       }
     }
-
     return true;
   }
 
