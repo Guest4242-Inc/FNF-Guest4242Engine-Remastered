@@ -782,6 +782,8 @@ class PlayState extends MusicBeatSubState
       currentChart.cacheVocals();
     }
 
+    scoreText.setFormat(null, 16, 0xFFFFFFFF, "center");
+
     // Prepare the Conductor.
     Conductor.instance.forceBPM(null);
 
@@ -2532,15 +2534,38 @@ class PlayState extends MusicBeatSubState
     // TODO: Add functionality for modules to update the score text.
     if (isBotPlayMode)
     {
-      scoreText.text = 'Bot Play Enabled';
+      scoreText.text = 'Score: ??? | Accuracy: 100%';
     }
     else
     {
       // TODO: Add an option for this maybe?
       var commaSeparated:Bool = true;
-      scoreText.text = 'Score: ${FlxStringUtil.formatMoney(songScore, false, commaSeparated)}';
+      scoreText.text = 'Score: ${FlxStringUtil.formatMoney(songScore, false, commaSeparated)} | Accuracy: ${calculateAccuracy()}%';
+      scoreText.x = (FlxG.width - scoreText.width) / 2;
     }
   }
+
+/**
+ * Calculates the player's accuracy percentage.
+ */
+function calculateAccuracy():String {
+    var tallies = Highscore.tallies;
+
+    var notesPlayed:Int = tallies.sick + tallies.good + tallies.bad + tallies.shit + tallies.missed;
+    if (notesPlayed == 0) return "0.00";
+
+    var totalScore:Float = tallies.sick * 1.0
+                         + tallies.good * 0.85
+                         + tallies.bad * 0.7
+                         + tallies.shit * 0.5
+                         + tallies.missed * 0.0;
+
+    var maxScore:Float = notesPlayed * 1.0;
+
+    var accuracy:Float = (totalScore / maxScore) * 100.0;
+
+    return Std.string(Math.round(accuracy * 100) / 100);
+}
 
   /**
      * Updates the values of the health bar.
