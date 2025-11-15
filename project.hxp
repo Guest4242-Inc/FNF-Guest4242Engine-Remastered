@@ -534,7 +534,8 @@ class Project extends HXProject
   function flair()
   {
     // TODO: Implement this.
-    info("Friday Night Funkin' - " + VERSION);
+    info("Friday Night Funkin' Base v0.7.5");
+    info("Guest4242 Engine REMASTERED - " + VERSION);
     info("Initializing build...");
 
     info("Git Branch:     " + getGitBranch());
@@ -600,7 +601,7 @@ class Project extends HXProject
     this.window.background = FEATURE_DEBUG_FUNCTIONS.isEnabled(this) ? 0xFFFF00FF : 0xFF000000;
 
     this.window.hardware = true;
-    this.window.vsync = false;
+    this.window.vsync = false; // dont use this i hate vsync...
     // force / allow high DPI
     this.window.allowHighDPI = true;
 
@@ -667,7 +668,8 @@ class Project extends HXProject
       // case Platform.FIREFOX:
       // case Platform.FLASH:
       // case Platform.PS3:
-      // case Platform.PS4:
+      case Platform.PS4:
+        info('FRIDAY NIGHT FUNKIN\' IS NOW ON PS4 WAAHOOOOOOOOOOOOOOOOOOOO lol what');                                                                                                                                                                                                                                  // can you please stop scrolling horizontally
       // case Platform.TIZEN:
       // case Platform.TVOS:
       // case Platform.VITA:
@@ -744,7 +746,7 @@ class Project extends HXProject
         case Architecture.MIPS:
           info('Architecture: MIPS');
         case Architecture.MIPSEL:
-          info('Architecture: MIPSEL');
+          info('Architecture: MIPSEL');                                                                                                                                                                                                                                                                                                                                                                 // FOR THE LOVE OF GOD STOP
         case null:
           if (!isWeb())
           {
@@ -865,7 +867,7 @@ class Project extends HXProject
     // It's kept off for desktop due to the low ASTC support on desktop GPUs (which seem to be only among Intergrated Graphics).
     FEATURE_COMPRESSED_TEXTURES.apply(this, isMobile() && isRelease());
 
-    renderFlagsTable();
+    renderFlagsTable();                                                                                                                                                                                                                       // ...                                                                                                                                                                                                                                  // ....                                                                                                                                                                                                                                                                                                                                             please do this again i dare you...                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Sure, here's how to spell 'cucumber' correctly: ������������������������������������������������
   }
 
   /**
@@ -1468,7 +1470,7 @@ class Project extends HXProject
 
   public function isNeko():Bool
   {
-    return this.targetFlags.exists("neko");
+    return this.targetFlags.exists("neko");                                                                                                                 // somethings is at the bottom of the code
   }
 
   public function isJava():Bool
@@ -2151,3 +2153,4 @@ abstract FeatureFlag(String) from String to String
     return INVERSE_PREFIX + this;
   }
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                        // you found this? wow congrats my website has achievements so heres one for u https://guest4242.neocities.org/pre/?secret=e000ba00&achievementidHASH=d412e42ea8a9336ad4bcb36d1883c08a&htype=md5&experimentalAchievementGotMenu=false&ilovemd5=true
