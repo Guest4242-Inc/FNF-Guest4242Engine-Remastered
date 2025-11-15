@@ -6,6 +6,8 @@ import funkin.ui.debug.DebugMenuSubState;
 #end
 import flixel.FlxObject;
 import flixel.FlxSubState;
+import flixel.FlxG;
+import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.effects.FlxFlicker;
 import flixel.math.FlxPoint;
@@ -69,6 +71,8 @@ class MainMenuState extends MusicBeatState
   }
 
   static var rememberedSelectedIndex:Int = 0;
+
+  static var oldfreeplaystatething:funkin.ui.freeplay.OldFreeplayState = new funkin.ui.freeplay.OldFreeplayState();
 
   // this should never be false on non-mobile targets.
   var hasUpgraded:Bool = false;
@@ -181,11 +185,15 @@ class MainMenuState extends MusicBeatState
           upgradeSparkles.members[i].cancelSparkle();
         }
       }
-
+      if (Preferences.oldfreeplay) {
+        FlxG.switchState(oldfreeplaystatething); // no options here because that can trigger too many arguments for function argument targetsubstate
+        return;
+      } else {
       openSubState(new FreeplayState(
         {
           character: targetCharacter
         }));
+      }
     });
 
     if (hasUpgraded)

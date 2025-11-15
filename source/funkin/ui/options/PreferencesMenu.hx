@@ -113,6 +113,9 @@ class PreferencesMenu extends Page<OptionsState.OptionsMenuPageName>
       Preferences.naughtyness = value;
     }, Preferences.naughtyness);
     #end
+    createPrefItemCheckbox('Temp old freeplay', 'Does what it exactly says!', function(value:Bool):Void {
+      Preferences.oldfreeplay = value;
+    }, Preferences.oldfreeplay);
     createPrefItemCheckbox('Downscroll', 'If enabled, this will make the notes move downwards.', function(value:Bool):Void {
       Preferences.downscroll = value;
     },
