@@ -113,9 +113,17 @@ class PreferencesMenu extends Page<OptionsState.OptionsMenuPageName>
       Preferences.naughtyness = value;
     }, Preferences.naughtyness);
     #end
+    #if mobile
+    createPrefItemCheckbox('Force no ads', 'Does what it exactly says, again.', function(value:Bool):Void { // i hate ads so i decided to add this
+      Preferences.noAds = value;
+    }, Preferences.noAds);
+    #end
+    createPrefItemCheckbox('Botplay', 'How many times do I have to repeat that this does exactly what it says?', function(value:Bool):Void {
+      Preferences.botplaysetting = value;
+    }, Preferences.botplaysetting);
     createPrefItemCheckbox('Temp old freeplay', 'Does what it exactly says!', function(value:Bool):Void {
-      Preferences.oldfreeplay = value;
-    }, Preferences.oldfreeplay);
+      Preferences.botplaysetting = value;
+    }, Preferences.botplaysetting);
     createPrefItemCheckbox('Downscroll', 'If enabled, this will make the notes move downwards.', function(value:Bool):Void {
       Preferences.downscroll = value;
     },

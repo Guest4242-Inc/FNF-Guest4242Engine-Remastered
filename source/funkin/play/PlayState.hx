@@ -685,7 +685,11 @@ class PlayState extends MusicBeatSubState
     if (params.targetVariation != null) currentVariation = params.targetVariation;
     if (params.targetInstrumental != null) currentInstrumental = params.targetInstrumental;
     isPracticeMode = params.practiceMode ?? false;
-    isBotPlayMode = params.botPlayMode ?? false;
+    if (Preferences.botplaysetting) {
+      isBotPlayMode = true;
+    } else {
+      isBotPlayMode = params.botPlayMode ?? false;
+    }
     isMinimalMode = params.minimalMode ?? false;
     startTimestamp = params.startTimestamp ?? 0.0;
     playbackRate = params.playbackRate ?? 1.0;
@@ -2534,13 +2538,14 @@ class PlayState extends MusicBeatSubState
     // TODO: Add functionality for modules to update the score text.
     if (isBotPlayMode)
     {
-      scoreText.text = 'Score: ??? | Accuracy: 100%';
+      scoreText.text = 'Score: ${FlxStringUtil.formatMoney(songScore, false)} | Accuracy: 100% | Combo Breaks: 0';
+      scoreText.x = (FlxG.width - scoreText.width) / 2;
     }
     else
     {
       // TODO: Add an option for this maybe?
       var commaSeparated:Bool = true;
-      scoreText.text = 'Score: ${FlxStringUtil.formatMoney(songScore, false, commaSeparated)} | Accuracy: ${calculateAccuracy()}%';
+      scoreText.text = 'Score: ${FlxStringUtil.formatMoney(songScore, false, commaSeparated)} | Accuracy: ${calculateAccuracy()}% | Combo Breaks: ${Highscore.tallies.missed}';
       scoreText.x = (FlxG.width - scoreText.width) / 2;
     }
   }
@@ -2574,7 +2579,7 @@ function calculateAccuracy():String {
   {
     if (isBotPlayMode)
     {
-      healthLerp = Constants.HEALTH_MAX;
+      healthLerp = FlxMath.lerp(healthLerp, health, 0.15);
     }
     else
     {
@@ -2725,9 +2730,10 @@ function calculateAccuracy():String {
       if (holdNote.hitNote && !holdNote.missedNote && holdNote.sustainLength > 0)
       {
         // Grant the player health.
-        if (!isBotPlayMode)
-        {
-          health += Constants.HEALTH_HOLD_BONUS_PER_SECOND * elapsed;
+        health += Constants.HEALTH_HOLD_BONUS_PER_SECOND * elapsed;
+        if (isBotPlayMode) { // lol
+          songScore += Std.int(Constants.SCORE_HOLD_BONUS_PER_SECOND * elapsed);
+        } else {
           songScore += Std.int(Constants.SCORE_HOLD_BONUS_PER_SECOND * elapsed);
         }
 
@@ -2747,8 +2753,6 @@ function calculateAccuracy():String {
         // vocals.playerVolume = 0;
         // if (currentStage != null && currentStage.getBoyfriend() != null) currentStage.getBoyfriend().playSingAnimation(holdNote.noteData.getDirection(), true);
 
-        if (!isBotPlayMode)
-        {
           if (holdNote.sustainLength > Constants.HOLD_DROP_PENALTY_THRESHOLD_MS)
           {
             // Penalize the player for letting go of a hold note too early.
@@ -2770,20 +2774,25 @@ function calculateAccuracy():String {
             if (event.eventCanceled) continue;
 
             trace('Penalizing score by ${event.score} and health by ${event.healthChange} for dropping hold note (is combo break: ${event.isComboBreak})!');
-            applyScore(event.score, '', event.healthChange, event.isComboBreak);
+            if (isBotPlayMode) {
+              botplayNoteProcessing();
+            } else {
+              applyScore(event.score, '', event.healthChange, event.isComboBreak);
+            }
 
-            // Play the miss sound.
-            if (event.playSound)
-            {
-              if (vocals != null) vocals.playerVolume = 0;
-              FunkinSound.playOnce(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.5, 0.6));
+            if (!isBotPlayMode) {
+              // Play the miss sound.
+              if (event.playSound)
+              {
+                if (vocals != null) vocals.playerVolume = 0;
+                FunkinSound.playOnce(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.5, 0.6));
+              }
             }
           }
           else
           {
             trace('Hold note too short, not penalizing...');
           }
-        }
       }
     }
   }
@@ -2806,6 +2815,15 @@ function calculateAccuracy():String {
     // Respawns notes that were between the previous time and the current time when skipping backward, or destroy notes between the previous time and the current time when skipping forward.
     playerStrumline.handleSkippedNotes();
     opponentStrumline.handleSkippedNotes();
+  }
+
+  /**
+     * A lil' silly thing for botplay lol
+     */
+  function botplayNoteProcessing():Void {
+    if (isBotPlayMode) {
+      songScore += 1000;
+    }
   }
 
   /**
@@ -2839,9 +2857,6 @@ function calculateAccuracy():String {
 
       playerStrumline.pressKey(input.noteDirection);
 
-      // Don't credit or penalize inputs in Bot Play.
-      if (isBotPlayMode) continue;
-
       var notesInDirection:Array<NoteSprite> = notesByDirection[input.noteDirection];
 
       #if FEATURE_GHOST_TAPPING
@@ -2852,7 +2867,7 @@ function calculateAccuracy():String {
       {
         // Pressed a wrong key with no notes nearby.
         // Perform a ghost miss (anti-spam).
-        ghostNoteMiss(input.noteDirection, notesInRange.length > 0);
+        if (!isBotPlayMode) ghostNoteMiss(input.noteDirection, notesInRange.length > 0);
 
         // Play the strumline animation.
         playerStrumline.playPress(input.noteDirection);

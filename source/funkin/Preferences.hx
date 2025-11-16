@@ -57,6 +57,8 @@ class Preferences
    */
   public static var naughtyness(get, set):Bool;
 
+  @:isVar public static var botplaysetting(get, set):Bool = false;
+
   @:isVar public static var oldfreeplay(get, set):Bool = false;
 
   static function get_oldfreeplay():Bool
@@ -67,6 +69,15 @@ class Preferences
   static function set_oldfreeplay(value:Bool):Bool
   {
     oldfreeplay = value;
+    return value;
+  }
+
+  static function get_botplaysetting():Bool {
+    return botplaysetting;
+  }
+
+  static function set_botplaysetting(value:Bool):Bool {
+    botplaysetting = value;
     return value;
   }
 

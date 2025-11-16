@@ -8,6 +8,18 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.FlxState;
 import lime.utils.Assets;
+#if web
+class OldFreeplayState extends FlxState
+{
+    override function create()
+    {
+        super.create();
+        var warning:FlxText = new FlxText(0, FlxG.height / 2 - 10, FlxG.width, "Old Freeplay Mode is not supported on Web targets yet :c");
+        warning.setFormat(null, 16, FlxColor.WHITE, "center");
+        add(warning);
+    }
+}
+#else
 import sys.io.File;
 
 class OldFreeplayState extends MusicBeatState
@@ -197,3 +209,4 @@ class Song
     public static function loadFromJson(file:String,name:String):Dynamic { return {}; }
 }
 class MainMenuState extends FlxState {}
+#end
