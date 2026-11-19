@@ -1,3 +1,5 @@
+this engine is dead and no longer maintained, this is here as a archive
+
 <div align='center'><img src="docs/readme_images/FNF_logo.png" width="800">
 
 <h2>Friday Night Funkin' is a rhythm game. Built using HaxeFlixel for <a href="https://ldjam.com/events/ludum-dare/47">Ludum Dare 47.</a></h2>
